@@ -2,10 +2,10 @@
 Senior Design 
 Spring 2010
 Automated Adjustable Table
-
-Rev. 1
  */
 
+
+// CONSTANTS
 
 // inputs
 const int leftSensorPin = 2;     // left sensor input
@@ -15,11 +15,17 @@ const int rightSensorPin = 5;    // right sensor input
 const int leftSensorMotor = 3;   // left sensor motor
 const int rightSensorMotor = 6;  // right sensor motor
 
+const int leftTableMotor = 8;    // move table to the left
+const int tableRightMotor = 9;   // move table to the right
+
 //
 //const int ledPin =  13;      // the number of the LED pin
 
-// variables will change:
+
+// VARIABLES
 int buttonState = 0;         // variable for reading the pushbutton status
+
+
 
 void setup() {
   // outputs
@@ -32,6 +38,8 @@ void setup() {
 }
 
 void loop(){
+  
+  // sensors are on motors to move
   
   // setup left sensor placement
   while(digitalRead(leftSensorPin) == HIGH) {
@@ -46,6 +54,8 @@ void loop(){
     delay(50);
     digitalWrite(rightSensorMotor, LOW);
   }
+  
+  // sensors are in correct positions
 
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH:

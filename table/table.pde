@@ -2,6 +2,8 @@
 Senior Design 
 Spring 2010
 Automated Adjustable Table
+
+James Wilson
  */
 
 
@@ -19,11 +21,13 @@ const int leftTableMotor = 8;    // move table to the left
 const int tableRightMotor = 9;   // move table to the right
 
 //
-//const int ledPin =  13;      // the number of the LED pin
+//const int ledPin =  13;        // the number of the LED pin
 
 
 // VARIABLES
-int buttonState = 0;         // variable for reading the pushbutton status
+int leftStatus = 0;              // status of the left sensor
+int rightStatus = 0;             // status of the right sensor
+int setupDone = 0;               // status of the setup
 
 
 
@@ -37,8 +41,7 @@ void setup() {
   pinMode(rightSensorPin, INPUT);
 }
 
-void loop(){
-  
+void motorSetup() {
   // sensors are on motors to move into correct position
   // they move out until they stop sensing 
   // the sensors then measure if the person moves in front of the sensors
@@ -58,15 +61,17 @@ void loop(){
   }
   
   // sensors are in correct positions
+}
 
-  // check if the pushbutton is pressed.
-  // if it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {     
-    // turn LED on:    
-    digitalWrite(ledPin, HIGH);  
-  } 
-  else {
-    // turn LED off:
-    digitalWrite(ledPin, LOW); 
+void loop(){
+  
+  // setup the motor placement
+  if(!setupDone) {
+    motorSetup();
   }
+  // move table if sensors detect object
+  
+  
+ 
+    
 }

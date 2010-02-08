@@ -23,7 +23,8 @@ int buttonState = 0;         // variable for reading the pushbutton status
 
 void setup() {
   // outputs
-  pinMode(ledPin, OUTPUT);      
+  pinMode(leftSensorMotor, OUTPUT);      
+  pinMode(rightSensorMotor, OUTPUT);
   
   // inputs
   pinMode(leftSensorPin, INPUT);     
@@ -31,8 +32,20 @@ void setup() {
 }
 
 void loop(){
-  // read the state of the pushbutton value:
-  buttonState = digitalRead(buttonPin);
+  
+  // setup left sensor placement
+  while(digitalRead(leftSensorPin) == HIGH) {
+    digitalWrite(leftSensorMotor, HIGH);
+    delay(50);
+    digitalWrite(leftSensorMotor, LOW);
+  }
+  
+  // setup right sensor placement
+  while(digitalRead(rightSensorPin) == HIGH) {
+    digitalWrite(rightSensorMotor, HIGH);
+    delay(50);
+    digitalWrite(rightSensorMotor, LOW);
+  }
 
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH:

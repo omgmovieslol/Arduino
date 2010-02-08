@@ -39,7 +39,9 @@ void setup() {
 
 void loop(){
   
-  // sensors are on motors to move
+  // sensors are on motors to move into correct position
+  // they move out until they stop sensing 
+  // the sensors then measure if the person moves in front of the sensors
   
   // setup left sensor placement
   while(digitalRead(leftSensorPin) == HIGH) {

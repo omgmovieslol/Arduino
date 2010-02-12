@@ -94,16 +94,18 @@ void moveLeft() {
     delay(tableMotorLength);
     digitalWrite(leftTableMotor, LOW);
     delay(delayRate);
+    leftStatus = digitalRead(leftSensorPin);
   }
 }
 void moveRight() {
   //leftStatus = digitalRead(leftSensorPin);
-  rightStatus = digitalRead(rightSensorPin); // i 
+  rightStatus = digitalRead(rightSensorPin);
   while(leftStatus == HIGH) {
     digitalWrite(rightTableMotor, HIGH);
     delay(tableMotorLength);
     digitalWrite(rightTableMotor, LOW);
     delay(delayRate);
+    rightStatus = digitalRead(rightSensorPin);
   }
 }
 

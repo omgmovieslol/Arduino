@@ -111,12 +111,12 @@ void moveRight() {
 void loop(){
   
   // setup the motor placement
-  //if(!setupDone || setupCount >= 5) {
+  if(!setupDone || setupCount >= 5) {
     motorSetup();
-  //}
+  }
   
   // move table if sensors detect object
-  /*leftStatus = digitalRead(leftSensorPin);
+  leftStatus = digitalRead(leftSensorPin);
   rightStatus = digitalRead(rightSensorPin);
   
   // if both sensors are activated, something is wrong.
@@ -129,7 +129,7 @@ void loop(){
   }
   else if(rightStatus == HIGH) {
     moveRight();
-  }*/
+  }
   
   // not really sample rate due to time doing above calculations
   // but close enough

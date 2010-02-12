@@ -27,7 +27,8 @@ const int ledPin = 13;           // testing pin
 const int sampleRate = 200;      // sampling rate in ms. original idea was 200 ms
 const int sensorMotorLength = 50;  // how long the motor should be activated when moving sensor motors
 const int tableMotorLength = 50; // how long the table motor should be activated to move it
-const int delayRate = 100;       // how long between movements. think immediate running is causing a glitch or something
+const int delayRate = 100;       // how long between movements.
+                                 // 0 for a no-op, I guess
 
 
 // VARIABLES
@@ -90,6 +91,7 @@ void moveLeft() {
   //rightStatus = digitalRead(rightSensorPin); // i 
   // moves until is the sen  sor stops sensing an object
   while(leftStatus == HIGH) {
+    if(digitalRead(rightSensorPin) == HIGH) break;
     digitalWrite(leftTableMotor, HIGH);
     delay(tableMotorLength);
     digitalWrite(leftTableMotor, LOW);
@@ -101,6 +103,7 @@ void moveRight() {
   //leftStatus = digitalRead(leftSensorPin);
   rightStatus = digitalRead(rightSensorPin);
   while(rightStatus == HIGH) {
+    if(digitalRead(leftSensorPin) == HIGH) break;
     digitalWrite(rightTableMotor, HIGH);
     delay(tableMotorLength);
     digitalWrite(rightTableMotor, LOW);

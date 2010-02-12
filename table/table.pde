@@ -100,7 +100,7 @@ void moveLeft() {
 void moveRight() {
   //leftStatus = digitalRead(leftSensorPin);
   rightStatus = digitalRead(rightSensorPin);
-  while(leftStatus == HIGH) {
+  while(rightStatus == HIGH) {
     digitalWrite(rightTableMotor, HIGH);
     delay(tableMotorLength);
     digitalWrite(rightTableMotor, LOW);

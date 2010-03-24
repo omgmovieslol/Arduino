@@ -1,10 +1,10 @@
-/*
+  /*
 Senior Design 
 Spring 2010
 Automated Adjustable Table
 
 James Wilson
- */
+*/
 
 
 // CONSTANTS
@@ -26,7 +26,7 @@ const int ledPin = 13;           // testing pin
 // user defined
 const int sampleRate = 200;      // sampling rate in ms. original idea was 200 ms
 const int sensorMotorLength = 50;  // how long the motor should be activated when moving sensor motors
-const int tableMotorLength = 50; // how long the table motor should be activated to move it
+const int tableMotorLength = 200; // how long the table motor should be activated to move it
 const int delayRate = 100;       // how long between movements.
                                  // 0 for a no-op, I guess
 

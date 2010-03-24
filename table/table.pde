@@ -1,4 +1,4 @@
-  /*
+/*
 Senior Design 
 Spring 2010
 Automated Adjustable Table
@@ -6,6 +6,12 @@ Automated Adjustable Table
 James Wilson
 */
 
+/*
+TODO:
+Front and back movement
+Reset table and sensor at end
+
+*/
 
 // CONSTANTS
 
@@ -13,20 +19,30 @@ James Wilson
 const int leftSensorPin = 2;     // left sensor input
 const int rightSensorPin = 5;    // right sensor input
 
+const int resetSensor = 10;      // table left/right reset sensor
+
+const int analogSensor = 0;      // front/back sensor. Uses analog measurement
+
 // output to motors
 const int leftSensorMotor = 3;   // left sensor motor
+const int leftSensorReset = 4;   // left sensor motor reverse direction
 const int rightSensorMotor = 6;  // right sensor motor
+const int rightSensorReset = 7;  // right sensor motor reverse direction
 
 const int leftTableMotor = 8;    // move table to the left
 const int rightTableMotor = 9;   // move table to the right
+
+const int frontTableMotor = 12;  // move table to the front
+const int backTableMotor = 13;   // move table to the back
+
 
 
 const int ledPin = 13;           // testing pin
 
 // user defined
 const int sampleRate = 200;      // sampling rate in ms. original idea was 200 ms
-const int sensorMotorLength = 50;  // how long the motor should be activated when moving sensor motors
-const int tableMotorLength = 200; // how long the table motor should be activated to move it
+const int sensorMotorLength = 50;// how long the motor should be activated when moving sensor motors
+const int tableMotorLength = 200;// how long the table motor should be activated to move it
 const int delayRate = 100;       // how long between movements.
                                  // 0 for a no-op, I guess
 
@@ -50,6 +66,13 @@ void setup() {
   
   pinMode(leftTableMotor, OUTPUT);
   pinMode(rightTableMotor, OUTPUT);
+  
+  pinMode(leftSensorReset, OUTPUT);
+  pinMode(rightSensorReset, OUTPUT);
+  
+  pinMode(resetSensor, INPUT);
+  
+  // don't declare analog input. it's always an input
   
   // inputs
   pinMode(leftSensorPin, INPUT);     
@@ -135,6 +158,8 @@ void loop(){
   else if(rightStatus == HIGH) {
     moveRight();
   }
+  
+  
   
   // not really sample rate due to time doing above calculations
   // but close enough

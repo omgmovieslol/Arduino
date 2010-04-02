@@ -43,7 +43,7 @@ const int ledPin = 13;           // testing pin
 const int sampleRate = 200;      // sampling rate in ms. original idea was 200 ms
 const int sensorMotorLength = 50;// how long the motor should be activated when moving sensor motors
 const int tableMotorLength = 200;// how long the table motor should be activated to move it
-const int delayRate = 100;       // how long between movements.
+const int delayRate = 0;         // how long between movements.
                                  // 0 for a no-op, I guess
 
 
@@ -52,6 +52,7 @@ int leftStatus = 0;              // status of the left sensor
 int rightStatus = 0;             // status of the right sensor
 int setupDone = 0;               // status of the setup
 int setupCount = 0;              // number of times the sensors failed. 5 requires a resetup.
+int analogValue = 0;
 
 
 

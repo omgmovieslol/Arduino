@@ -70,6 +70,11 @@ void setup() {
   pinMode(leftTableMotor, OUTPUT);
   pinMode(rightTableMotor, OUTPUT);
   
+  // front and back motor pins weren't setup
+  // could be causing the problem with front back movement
+  pinMode(frontTableMotor, OUTPUT);
+  pinMode(backTableMotor, OUTPUT);
+  
   pinMode(leftSensorReset, OUTPUT);
   pinMode(rightSensorReset, OUTPUT);
   

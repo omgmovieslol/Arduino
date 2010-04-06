@@ -20,9 +20,12 @@ const int leftSensorPin = 13;    // left sensor input
                                  // to allow the interrupt from the reset pin, which requires either pin 2 or 3, so using pin 2
 const int rightSensorPin = 5;    // right sensor input
 
-const int resetSensor = 13;      // table left/right reset sensor
+//const int resetSensor = 13;      // table left/right reset sensor
+const int resetSensor = 1;       // reset sensor is going to be an analog input, since we're running out of digital I/O ports
 
 const int analogSensor = 0;      // front/back sensor. Uses analog measurement
+
+
 
 // output to motors
 const int leftSensorMotor = 3;   // left sensor motor
@@ -45,7 +48,10 @@ const int sampleRate = 200;      // sampling rate in ms. original idea was 200 m
 const int sensorMotorLength = 250;// how long the motor should be activated when moving sensor motors
 const int tableMotorLength = 200;// how long the table motor should be activated to move it
 const int delayRate = 0;         // how long between movements.
-                                 // 0 for a no-op, I guess
+                                 // 0 for a no-op, I guess. though the compiler should remove it
+                                 
+const int resetThreshold = 100;  // reset sensor threshold. analog value allowing it to detect the table
+
 
 
 // VARIABLES
@@ -55,7 +61,10 @@ int setupDone = 0;               // status of the setup
 int setupCount = 0;              // number of times the sensors failed. 5 requires a resetup.
 int analogValue = 0;             // starting value of the analog sensor
 int analogCurrent = 0;           // current analog value. compared to analogValue
-
+int leftSensorMoves = 0;         // number of times the left sensors have moved. to reset to original position.
+int rightSensorMoves = 0;        // number of times right sensor moved.
+boolean onReset = false;
+boolean startReady = false;
 
 
 
@@ -86,6 +95,7 @@ void setup() {
   // it will move the table back to the center
   // move the sensors back to their starting locations, hopefully
   attachInterrupt(0, reset, RISING);  
+  attachInterrupt(0, start, FALLING); // button now more likely a switch
   
   
   analogValue = analogRead(analogSensor);
@@ -93,6 +103,48 @@ void setup() {
 
 void reset() {
   //TODO: to the reset routine
+  
+  onReset = true;
+  
+  // move the table back to original position
+  if(analogRead(resetSensor) > resetThreshold) {
+    while(analogRead(resetSensor) > resetThreshold) {
+      digitalWrite(leftTableMotor, HIGH);
+      delay(tableMotorLength);
+      digitalWrite(leftTableMotor, LOW);
+      delay(delayRate);
+    }
+  }
+  else {
+    while(analogRead(resetSensor) < resetThreshold) {
+      digitalWrite(rightTableMotor, HIGH);
+      delay(tableMotorLength);
+      digitalWrite(rightTableMotor, LOW);
+      delay(delayRate);
+    }
+  }
+  
+  // reset sensors back to original position
+  for(int i=0; i<leftSensorMoves; i++) {
+    digitalWrite(leftSensorReset, HIGH);
+    delay(sensorMotorLength);
+    digitalWrite(leftSensorReset, LOW);
+    delay(delayRate);
+  }
+  for(int i=0; i<rightSensorMoves; i++) {
+    digitalWrite(rightSensorReset, HIGH);
+    delay(sensorMotorLength);
+    digitalWrite(rightSensorReset, LOW);
+    delay(delayRate);
+  }
+  
+  
+  
+}
+
+void start() {
+  onReset = false;
+  startReady = true;
 }
 
 void motorSetup() {
@@ -106,6 +158,7 @@ void motorSetup() {
     digitalWrite(leftSensorMotor, HIGH);
     delay(sensorMotorLength);
     digitalWrite(leftSensorMotor, LOW);
+    leftSensorMoves++;
     delay(delayRate);
   }
   
@@ -115,6 +168,7 @@ void motorSetup() {
     digitalWrite(rightSensorMotor, HIGH); 
     delay(sensorMotorLength);
     digitalWrite(rightSensorMotor, LOW); 
+    rightSensorMoves++;
     delay(delayRate);
   }
   
@@ -180,36 +234,39 @@ void moveBack() {
 // main()
 void loop(){
   
-  // setup the motor placement
-  //if(true) {
-  if(!setupDone || setupCount >= 5) {
-    motorSetup();
-  }
+  if(!onReset && startReady) {
   
-  // move table if sensors detect object
-  leftStatus = digitalRead(leftSensorPin);
-  rightStatus = digitalRead(rightSensorPin);
-  analogCurrent = analogRead(analogSensor);
+    // setup the motor placement
+    //if(true) {
+    if(!setupDone || setupCount >= 5) {
+      motorSetup();
+    }
+    
+    // move table if sensors detect object
+    leftStatus = digitalRead(leftSensorPin);
+    rightStatus = digitalRead(rightSensorPin);
+    analogCurrent = analogRead(analogSensor);
+    
+    // if both sensors are activated, something is wrong.
+    // it might be fixed with time. if not resetup the sensors
+    if(leftStatus == HIGH && rightStatus == HIGH) {
+      setupCount++;
+    }
+    else if(leftStatus == HIGH) {
+      moveLeft();
+    }
+    else if(rightStatus == HIGH) {
+      moveRight();
+    }
+    
+    /*if(analogCurrent*1.05 < analogValue) {
+      moveFront();
+    }
+    else if(analogCurrent*.95 > analogValue) {
+      moveBack();
+    }*/
   
-  // if both sensors are activated, something is wrong.
-  // it might be fixed with time. if not resetup the sensors
-  if(leftStatus == HIGH && rightStatus == HIGH) {
-    setupCount++;
   }
-  else if(leftStatus == HIGH) {
-    moveLeft();
-  }
-  else if(rightStatus == HIGH) {
-    moveRight();
-  }
-  
-  /*if(analogCurrent*1.05 < analogValue) {
-    moveFront();
-  }
-  else if(analogCurrent*.95 > analogValue) {
-    moveBack();
-  }*/
-  
   
   
   // not really sample rate due to time doing above calculations

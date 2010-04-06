@@ -19,7 +19,7 @@ Reset table and sensor at end
 const int leftSensorPin = 2;     // left sensor input
 const int rightSensorPin = 5;    // right sensor input
 
-const int resetSensor = 10;      // table left/right reset sensor
+const int resetSensor = 13;      // table left/right reset sensor
 
 const int analogSensor = 0;      // front/back sensor. Uses analog measurement
 
@@ -32,8 +32,8 @@ const int rightSensorReset = 7;  // right sensor motor reverse direction
 const int leftTableMotor = 8;    // move table to the left
 const int rightTableMotor = 9;   // move table to the right
 
-const int frontTableMotor = 12;  // move table to the front
-const int backTableMotor = 13;   // move table to the back
+const int frontTableMotor = 10;  // move table to the front
+const int backTableMotor = 11;   // move table to the back
 
 
 
@@ -41,7 +41,7 @@ const int ledPin = 13;           // testing pin
 
 // user defined
 const int sampleRate = 200;      // sampling rate in ms. original idea was 200 ms
-const int sensorMotorLength = 50;// how long the motor should be activated when moving sensor motors
+const int sensorMotorLength = 250;// how long the motor should be activated when moving sensor motors
 const int tableMotorLength = 200;// how long the table motor should be activated to move it
 const int delayRate = 0;         // how long between movements.
                                  // 0 for a no-op, I guess
@@ -52,7 +52,9 @@ int leftStatus = 0;              // status of the left sensor
 int rightStatus = 0;             // status of the right sensor
 int setupDone = 0;               // status of the setup
 int setupCount = 0;              // number of times the sensors failed. 5 requires a resetup.
-int analogValue = 0;
+int analogValue = 0;             // starting value of the analog sensor
+int analogCurrent = 0;           // current analog value. compared to analogValue
+
 
 
 
@@ -78,6 +80,8 @@ void setup() {
   // inputs
   pinMode(leftSensorPin, INPUT);     
   pinMode(rightSensorPin, INPUT);
+  
+  analogValue = analogRead(analogSensor);
 }
 
 void motorSetup() {
@@ -86,6 +90,7 @@ void motorSetup() {
   // the sensors then measure if the person moves in front of the sensors
   
   // setup left sensor placement
+  digitalWrite(leftSensorReset, LOW);
   while(digitalRead(leftSensorPin) == HIGH) {
     digitalWrite(leftSensorMotor, HIGH);
     delay(sensorMotorLength);
@@ -94,12 +99,15 @@ void motorSetup() {
   }
   
   // setup right sensor placement
+  digitalWrite(rightSensorReset, LOW);
   while(digitalRead(rightSensorPin) == HIGH) {
     digitalWrite(rightSensorMotor, HIGH); 
     delay(sensorMotorLength);
     digitalWrite(rightSensorMotor, LOW); 
     delay(delayRate);
   }
+  
+  analogValue = analogRead(analogSensor);
   
   setupDone = 1;
   setupCount = 0;
@@ -136,10 +144,33 @@ void moveRight() {
   }
 }
 
+
+void moveFront() {
+  analogCurrent = analogRead(analogSensor);
+  while(analogCurrent <= analogValue) {
+    digitalWrite(frontTableMotor, HIGH);
+    delay(tableMotorLength);
+    digitalWrite(frontTableMotor, LOW);
+    delay(delayRate);
+    analogCurrent = analogRead(analogSensor);
+  }
+}
+void moveBack() {
+  analogCurrent = analogRead(analogSensor);
+  while(analogCurrent >= analogValue) {
+    digitalWrite(backTableMotor, HIGH);
+    delay(tableMotorLength);
+    digitalWrite(backTableMotor, LOW);
+    delay(delayRate);
+    analogCurrent = analogRead(analogSensor);
+  }
+}
+
 // main()
 void loop(){
   
   // setup the motor placement
+  //if(true) {
   if(!setupDone || setupCount >= 5) {
     motorSetup();
   }
@@ -147,6 +178,7 @@ void loop(){
   // move table if sensors detect object
   leftStatus = digitalRead(leftSensorPin);
   rightStatus = digitalRead(rightSensorPin);
+  analogCurrent = analogRead(analogSensor);
   
   // if both sensors are activated, something is wrong.
   // it might be fixed with time. if not resetup the sensors
@@ -159,6 +191,13 @@ void loop(){
   else if(rightStatus == HIGH) {
     moveRight();
   }
+  
+  /*if(analogCurrent*1.05 < analogValue) {
+    moveFront();
+  }
+  else if(analogCurrent*.95 > analogValue) {
+    moveBack();
+  }*/
   
   
   

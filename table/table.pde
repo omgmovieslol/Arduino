@@ -16,7 +16,8 @@ Reset table and sensor at end
 // CONSTANTS
 
 // inputs
-const int leftSensorPin = 2;     // left sensor input
+const int leftSensorPin = 13;    // left sensor input
+                                 // to allow the interrupt from the reset pin, which requires either pin 2 or 3, so using pin 2
 const int rightSensorPin = 5;    // right sensor input
 
 const int resetSensor = 13;      // table left/right reset sensor
@@ -81,7 +82,17 @@ void setup() {
   pinMode(leftSensorPin, INPUT);     
   pinMode(rightSensorPin, INPUT);
   
+  // this is for the reset button. 
+  // it will move the table back to the center
+  // move the sensors back to their starting locations, hopefully
+  attachInterrupt(0, reset, RISING);  
+  
+  
   analogValue = analogRead(analogSensor);
+}
+
+void reset() {
+  //TODO: to the reset routine
 }
 
 void motorSetup() {

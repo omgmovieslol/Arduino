@@ -163,7 +163,7 @@ void moveFront() {
     digitalWrite(frontTableMotor, LOW);
     delay(delayRate);
     analogCurrent = analogRead(analogSensor);
-    Serial.println("moving forward");
+    //Serial.println("moving forward");
   }
   analogValue = analogRead(analogSensor);
 }
@@ -176,7 +176,7 @@ void moveBack() {
     digitalWrite(backTableMotor, LOW);
     delay(delayRate);
     analogCurrent = analogRead(analogSensor);
-    Serial.println("moving back");
+    //Serial.println("moving back");
   }
   analogValue = analogRead(analogSensor);
 }
@@ -212,14 +212,14 @@ void loop(){
     moveRight();
   }
   
-  /*if(analogCurrent*1.4 < analogValue) {
+  if(analogCurrent*1.1 < analogValue) {
     moveFront();
   }
-  else if(analogCurrent*.6 > analogValue) {
+  else if(analogCurrent*.9 > analogValue) {
     moveBack();
   }
-  Serial.println(analogCurrent);
-  */
+  //Serial.println(analogCurrent);
+  
   
   
   // not really sample rate due to time doing above calculations

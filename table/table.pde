@@ -6,12 +6,6 @@ Automated Adjustable Table
 James Wilson
 */
 
-/*
-TODO:
-Front and back movement
-Reset table and sensor at end
-
-*/
 
 // CONSTANTS
 
@@ -64,13 +58,8 @@ int analogCurrent = 0;           // current analog value. compared to analogValu
 int leftSensorMoves = 0;         // number of times the left sensors have moved. to reset to original position.
 int rightSensorMoves = 0;        // number of times right sensor moved.
 boolean onReset = false;
-boolean startReady = false;
 
 
-
-// testing ctrl-c ctrl-v's
-// digitalWrite(ledPin, HIGH);
-// digitalWrite(ledPin, LOW);
 
 void setup() {
   // outputs
@@ -108,7 +97,6 @@ void setup() {
 }
 
 void reset() {
-  //TODO: to the reset routine
   
   if(!onReset) {
     onReset = true;
@@ -158,6 +146,8 @@ void reset() {
     
     
   } else {
+    // second reset press
+    // start the automation again
     onReset = false;
   }
   
@@ -260,10 +250,9 @@ void moveBack() {
 // main()
 void loop(){
   
-  if(!onReset && startReady) { 
+  if(!onReset) { 
   
     // setup the motor placement
-    //if(true) {
     if(!setupDone || setupCount >= 5) {
       motorSetup();
     }

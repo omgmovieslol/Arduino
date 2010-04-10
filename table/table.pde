@@ -93,7 +93,8 @@ void setup() {
   
   analogValue = analogRead(analogSensor);
   
-  Serial.begin(9600);
+  // serial output. used for testing
+  //Serial.begin(9600);
 }
 
 void reset() {
@@ -193,7 +194,6 @@ void motorSetup() {
 // probably should use PWM
 void moveLeft() {
   leftStatus = digitalRead(leftSensorPin);
-  //rightStatus = digitalRead(rightSensorPin); // i 
   // moves until is the sen  sor stops sensing an object
   while(leftStatus == HIGH) {
     if(digitalRead(rightSensorPin) == HIGH) break;
@@ -205,7 +205,6 @@ void moveLeft() {
   }
 }
 void moveRight() {
-  //leftStatus = digitalRead(leftSensorPin);
   rightStatus = digitalRead(rightSensorPin);
   while(rightStatus == HIGH) {
     if(digitalRead(leftSensorPin) == HIGH) break;
@@ -276,17 +275,14 @@ void loop(){
     
   
 
-  if(analogCurrent*1.15 < analogValue) {
-    moveFront();
-  }
-  else if(analogCurrent*.85 > analogValue) {  
-    moveBack();
-  }
-  //Serial.println(analogCurrent);
+    if(analogCurrent*1.15 < analogValue) {
+      moveFront();
+    }
+    else if(analogCurrent*.85 > analogValue) {  
+      moveBack();
+    }
   
   }
-
-  
   
   // not really sample rate due to time doing above calculations
   // but close enough

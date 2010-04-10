@@ -212,10 +212,10 @@ void loop(){
     moveRight();
   }
   
-  if(analogCurrent*1.1 < analogValue) {
+  if(analogCurrent*1.15 < analogValue) {
     moveFront();
   }
-  else if(analogCurrent*.9 > analogValue) {
+  else if(analogCurrent*.85 > analogValue) {  
     moveBack();
   }
   //Serial.println(analogCurrent);

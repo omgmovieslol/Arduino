@@ -110,17 +110,17 @@ void reset() {
     // move the table back to original left right position
     if(analogRead(resetSensor) > resetThreshold) {
       while(analogRead(resetSensor) > resetThreshold) {
-        digitalWrite(leftTableMotor, HIGH);
+        digitalWrite(rightTableMotor, HIGH);
         delay(tableMotorLength);
-        digitalWrite(leftTableMotor, LOW);
+        digitalWrite(rightTableMotor, LOW);
         delay(delayRate);
       }
     }
     else {
       while(analogRead(resetSensor) < resetThreshold) {
-        digitalWrite(rightTableMotor, HIGH);
+        digitalWrite(leftTableMotor, HIGH);
         delay(tableMotorLength);
-        digitalWrite(rightTableMotor, LOW);
+        digitalWrite(leftTableMotor, LOW);
         delay(delayRate);
       }
     }

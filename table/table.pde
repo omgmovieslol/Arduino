@@ -95,7 +95,6 @@ void setup() {
   // it will move the table back to the center
   // move the sensors back to their starting locations, hopefully
   attachInterrupt(0, reset, RISING);  
-  attachInterrupt(0, start, FALLING); // button now more likely a switch
   
   
   analogValue = analogRead(analogSensor);
@@ -104,47 +103,59 @@ void setup() {
 void reset() {
   //TODO: to the reset routine
   
-  onReset = true;
-  
-  // move the table back to original position
-  if(analogRead(resetSensor) > resetThreshold) {
-    while(analogRead(resetSensor) > resetThreshold) {
-      digitalWrite(leftTableMotor, HIGH);
-      delay(tableMotorLength);
-      digitalWrite(leftTableMotor, LOW);
+  if(!onReset) {
+    onReset = true;
+    
+    // move table all the way back
+    // just start moving the table at the beginnning
+    // it'll automatically stop moving when it hit the limit
+    digitalWrite(backTableMotor, HIGH);
+    
+    // move the table back to original left right position
+    if(analogRead(resetSensor) > resetThreshold) {
+      while(analogRead(resetSensor) > resetThreshold) {
+        digitalWrite(leftTableMotor, HIGH);
+        delay(tableMotorLength);
+        digitalWrite(leftTableMotor, LOW);
+        delay(delayRate);
+      }
+    }
+    else {
+      while(analogRead(resetSensor) < resetThreshold) {
+        digitalWrite(rightTableMotor, HIGH);
+        delay(tableMotorLength);
+        digitalWrite(rightTableMotor, LOW);
+        delay(delayRate);
+      }
+    }
+    
+    // reset sensors back to original position
+    for(int i=0; i<leftSensorMoves; i++) {
+      digitalWrite(leftSensorReset, HIGH);
+      delay(sensorMotorLength);
+      digitalWrite(leftSensorReset, LOW);
       delay(delayRate);
     }
-  }
-  else {
-    while(analogRead(resetSensor) < resetThreshold) {
-      digitalWrite(rightTableMotor, HIGH);
-      delay(tableMotorLength);
-      digitalWrite(rightTableMotor, LOW);
+    for(int i=0; i<rightSensorMoves; i++) {
+      digitalWrite(rightSensorReset, HIGH);
+      delay(sensorMotorLength);
+      digitalWrite(rightSensorReset, LOW);
       delay(delayRate);
     }
-  }
-  
-  // reset sensors back to original position
-  for(int i=0; i<leftSensorMoves; i++) {
-    digitalWrite(leftSensorReset, HIGH);
-    delay(sensorMotorLength);
-    digitalWrite(leftSensorReset, LOW);
-    delay(delayRate);
-  }
-  for(int i=0; i<rightSensorMoves; i++) {
-    digitalWrite(rightSensorReset, HIGH);
-    delay(sensorMotorLength);
-    digitalWrite(rightSensorReset, LOW);
-    delay(delayRate);
+    
+    
+    digitalWrite(backTableMotor, LOW);
+    
+    // just in case something weird happens, the table won't try to do front and back to where it was
+    analogValue = analogRead(analogSensor);
+    
+    
+  } else {
+    onReset = false;
   }
   
   
   
-}
-
-void start() {
-  onReset = false;
-  startReady = true;
 }
 
 void motorSetup() {

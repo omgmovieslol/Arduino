@@ -80,6 +80,11 @@ void setup() {
   pinMode(leftTableMotor, OUTPUT);
   pinMode(rightTableMotor, OUTPUT);
   
+  // front and back motor pins weren't setup
+  // could be causing the problem with front back movement
+  pinMode(frontTableMotor, OUTPUT);
+  pinMode(backTableMotor, OUTPUT);
+  
   pinMode(leftSensorReset, OUTPUT);
   pinMode(rightSensorReset, OUTPUT);
   
@@ -98,6 +103,8 @@ void setup() {
   
   
   analogValue = analogRead(analogSensor);
+  
+  Serial.begin(9600);
 }
 
 void reset() {
@@ -214,6 +221,8 @@ void moveRight() {
     if(digitalRead(leftSensorPin) == HIGH) break;
     digitalWrite(rightTableMotor, HIGH);
     delay(tableMotorLength);
+    
+    
     digitalWrite(rightTableMotor, LOW);
     delay(delayRate);
     rightStatus = digitalRead(rightSensorPin);
@@ -223,29 +232,35 @@ void moveRight() {
 
 void moveFront() {
   analogCurrent = analogRead(analogSensor);
+  digitalWrite(backTableMotor, LOW);
   while(analogCurrent <= analogValue) {
     digitalWrite(frontTableMotor, HIGH);
     delay(tableMotorLength);
     digitalWrite(frontTableMotor, LOW);
     delay(delayRate);
     analogCurrent = analogRead(analogSensor);
+    //Serial.println("moving forward");
   }
+  analogValue = analogRead(analogSensor);
 }
 void moveBack() {
   analogCurrent = analogRead(analogSensor);
+  digitalWrite(frontTableMotor, LOW);
   while(analogCurrent >= analogValue) {
     digitalWrite(backTableMotor, HIGH);
     delay(tableMotorLength);
     digitalWrite(backTableMotor, LOW);
     delay(delayRate);
     analogCurrent = analogRead(analogSensor);
+    //Serial.println("moving back");
   }
+  analogValue = analogRead(analogSensor);
 }
 
 // main()
 void loop(){
   
-  if(!onReset && startReady) {
+  if(!onReset && startReady) { 
   
     // setup the motor placement
     //if(true) {
@@ -270,14 +285,18 @@ void loop(){
       moveRight();
     }
     
-    /*if(analogCurrent*1.05 < analogValue) {
-      moveFront();
-    }
-    else if(analogCurrent*.95 > analogValue) {
-      moveBack();
-    }*/
+  
+
+  if(analogCurrent*1.15 < analogValue) {
+    moveFront();
+  }
+  else if(analogCurrent*.85 > analogValue) {  
+    moveBack();
+  }
+  //Serial.println(analogCurrent);
   
   }
+
   
   
   // not really sample rate due to time doing above calculations

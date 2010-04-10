@@ -95,7 +95,7 @@ void setup() {
   // it will move the table back to the center
   // move the sensors back to their starting locations, hopefully
   attachInterrupt(0, reset, RISING);  
-  attachInterrupt(0, start, FALLING); // button now more likely a switch
+  //attachInterrupt(0, start, FALLING); // button now more likely a switch
   
   
   analogValue = analogRead(analogSensor);

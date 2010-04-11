@@ -16,7 +16,7 @@ Reset table and sensor at end
 // CONSTANTS
 
 // inputs
-const int leftSensorPin = 2;     // left sensor input
+const int leftSensorPin = 12;     // left sensor input
 const int rightSensorPin = 5;    // right sensor input
 
 const int resetSensor = 13;      // table left/right reset sensor

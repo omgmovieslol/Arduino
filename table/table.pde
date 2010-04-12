@@ -11,7 +11,7 @@ James Wilson
 
 // inputs
 const int leftSensorPin = 13;    // left sensor input
-                                 // to allow the interrupt from the reset pin, which requires either pin 2 or 3, so using pin 2
+                                 // to allow the interrupt from the reset pin, which requires either pin 2 or 3
 const int rightSensorPin = 5;    // right sensor input
 
 //const int resetSensor = 13;      // table left/right reset sensor

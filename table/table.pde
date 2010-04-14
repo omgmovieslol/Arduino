@@ -140,8 +140,8 @@ void reset() {
     }
     rightSensorMoves=0;
     
-    // thirty second delay to move table all the way back
-    delay(30000); 
+    // twenty second delay to move table all the way back
+    delay(20000); 
     digitalWrite(backTableMotor, LOW);
     
     // just in case something weird happens, the table won't try to do front and back to where it was
@@ -237,7 +237,7 @@ void moveFront() {
     analogCurrent = analogRead(analogSensor);
     //Serial.println("moving forward");
   }
-  analogValue = analogRead(analogSensor);
+  //analogValue = analogRead(analogSensor);
 }
 void moveBack() {
   analogCurrent = analogRead(analogSensor);
@@ -251,7 +251,7 @@ void moveBack() {
     analogCurrent = analogRead(analogSensor);
     //Serial.println("moving back");
   }
-  analogValue = analogRead(analogSensor);
+  //analogValue = analogRead(analogSensor);
 }
 
 // main()

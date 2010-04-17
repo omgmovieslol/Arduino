@@ -238,6 +238,7 @@ void moveFront() {
     analogCurrent = analogRead(analogSensor);
     //Serial.println("moving forward");
   }
+  // removed since this would cause the table to end up getting closer and closer to the user
   //analogValue = analogRead(analogSensor);
 }
 void moveBack() {

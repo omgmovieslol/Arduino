@@ -8,8 +8,8 @@ James Wilson
 
 /*
 TODO:
-Front and back movement
-Reset table and sensor at end
+Concurrent FB/LR movement
+If analog too far, don't move
 
 */
 
@@ -171,6 +171,9 @@ void motorSetup() {
     delay(sensorMotorLength);
     digitalWrite(leftSensorMotor, LOW);
     leftSensorMoves++;
+    // removed reset option during motor setup
+    // button can still be pressed down
+    // so it would cause reset to run again
     //if(digitalRead(resetSwitch) == LOW) reset();
     delay(delayRate);
   }
@@ -198,7 +201,6 @@ void motorSetup() {
 // probably should use PWM
 void moveLeft() {
   leftStatus = digitalRead(leftSensorPin);
-  //rightStatus = digitalRead(rightSensorPin); // i 
   // moves until is the sen  sor stops sensing an object
   while(leftStatus == HIGH) {
     if(digitalRead(rightSensorPin) == HIGH) break;
@@ -211,7 +213,6 @@ void moveLeft() {
   }
 }
 void moveRight() {
-  //leftStatus = digitalRead(leftSensorPin);
   rightStatus = digitalRead(rightSensorPin);
   while(rightStatus == HIGH) {
     if(digitalRead(leftSensorPin) == HIGH) break;
@@ -258,8 +259,6 @@ void moveBack() {
 void loop(){
   
   // setup the motor placement
-  //if(true) {
-  
   if(!onReset) {
   if(!setupDone || setupCount >= 5) {
     motorSetup();

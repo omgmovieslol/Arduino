@@ -47,6 +47,8 @@ const int sensorMotorLength = 250;// how long the motor should be activated when
 const int tableMotorLength = 200;// how long the table motor should be activated to move it
 const int delayRate = 0;         // how long between movements.
                                  // 0 for a no-op, I guess
+const int analogLow = .85;       // the amount the analog sensor has to change in order to call the mvoe function
+const int analogHigh = 1.15;     // high precentage. better than calculating it each time i guess
 
 
 // VARIABLES
@@ -209,6 +211,8 @@ void moveLeft() {
     digitalWrite(leftTableMotor, LOW);
     if(digitalRead(resetSwitch) == LOW) reset();
     delay(delayRate);
+    if(analogRead(analogSensor)*analogHigh < analogValue) moveFront();
+    if(analogRead(analogSensor)*analogLow > analogValue) moveBack();
     leftStatus = digitalRead(leftSensorPin);
   }
 }
@@ -221,6 +225,8 @@ void moveRight() {
     digitalWrite(rightTableMotor, LOW);
     delay(delayRate);
     if(digitalRead(resetSwitch) == LOW) reset();
+    if(analogRead(analogSensor)*analogHigh < analogValue) moveFront();
+    if(analogRead(analogSensor)*analogLow > analogValue) moveBack();
     rightStatus = digitalRead(rightSensorPin);
   }
 }
@@ -291,10 +297,10 @@ void loop(){
     moveRight();
   }
   
-  if(analogCurrent*1.15 < analogValue) {
+  if(analogCurrent*analogHigh < analogValue) {
     moveFront();
   }
-  else if(analogCurrent*.85 > analogValue) {
+  else if(analogCurrent*analogLow > analogValue) {
     moveBack();
   }
   }

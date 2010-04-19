@@ -47,6 +47,8 @@ const int sensorMotorLength = 250;// how long the motor should be activated when
 const int tableMotorLength = 200;// how long the table motor should be activated to move it
 const int delayRate = 0;         // how long between movements.
                                  // 0 for a no-op, I guess
+const int awayReset = 50;        // if the sensor reads smaller than this value, run reset command
+                                 // this is probably because user left table
 
 
 // VARIABLES
@@ -287,6 +289,9 @@ void loop(){
     moveRight();
   }
   
+  if(analogValue < awayReset) {
+    reset();
+  } else {
   if(analogCurrent*1.15 < analogValue) {
     moveFront();
   }
@@ -294,6 +299,8 @@ void loop(){
     moveBack();
   }
   }
+  }
+  
   //Serial.println(analogCurrent);
   if(digitalRead(resetSwitch) == LOW) reset();
   

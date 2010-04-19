@@ -234,6 +234,8 @@ void moveFront() {
     delay(tableMotorLength);
     digitalWrite(frontTableMotor, LOW);
     if(digitalRead(resetSwitch) == LOW) reset();
+    if(digitalRead(leftSensorPin) == HIGH) moveLeft();
+    if(digitalRead(rightSensorPin) == HIGH) moveRight();
     delay(delayRate);
     analogCurrent = analogRead(analogSensor);
     //Serial.println("moving forward");
@@ -249,6 +251,8 @@ void moveBack() {
     delay(tableMotorLength);
     digitalWrite(backTableMotor, LOW);
     if(digitalRead(resetSwitch) == LOW) reset();
+    if(digitalRead(leftSensorPin) == HIGH) moveLeft();
+    if(digitalRead(rightSensorPin) == HIGH) moveRight();
     delay(delayRate);
     analogCurrent = analogRead(analogSensor);
     //Serial.println("moving back");

@@ -312,7 +312,7 @@ void moveBackLeft() {
   //analogValue = analogRead(analogSensor);
 }
 
-void moveBackright() {
+void moveBackRight() {
   analogCurrent = analogRead(analogSensor);
   digitalWrite(frontTableMotor, LOW);
   while(analogCurrent >= analogValue || rightStatus == HIGH) {

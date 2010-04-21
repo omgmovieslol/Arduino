@@ -241,7 +241,7 @@ void moveTable() {
     if(analogCurrent*1.15 < analogValue || analogCurrent*.85 > analogValue) {
       analogOn = 1;
     }
-    else if(leftStatus == LOW || rightStatus == LOW) {
+    else if(leftStatus == LOW && rightStatus == LOW) {
       moveDone = 1;
     }
     
@@ -250,64 +250,6 @@ void moveTable() {
   }
 }  
 
-// table movement functions
-// probably should use PWM
-void moveLeft() {
-  leftStatus = digitalRead(leftSensorPin);
-  // moves until is the sen  sor stops sensing an object
-  while(leftStatus == HIGH) {
-    if(digitalRead(rightSensorPin) == HIGH) break;
-    digitalWrite(leftTableMotor, HIGH);
-    delay(tableMotorLength);
-    digitalWrite(leftTableMotor, LOW);
-    if(digitalRead(resetSwitch) == LOW) reset();
-    delay(delayRate);
-    leftStatus = digitalRead(leftSensorPin);
-  }
-}
-void moveRight() {
-  rightStatus = digitalRead(rightSensorPin);
-  while(rightStatus == HIGH) {
-    if(digitalRead(leftSensorPin) == HIGH) break;
-    digitalWrite(rightTableMotor, HIGH);
-    delay(tableMotorLength);
-    digitalWrite(rightTableMotor, LOW);
-    delay(delayRate);
-    if(digitalRead(resetSwitch) == LOW) reset();
-    rightStatus = digitalRead(rightSensorPin);
-  }
-}
-
-
-void moveFront() {
-  analogCurrent = analogRead(analogSensor);
-  digitalWrite(backTableMotor, LOW);
-  while(analogCurrent <= analogValue) {
-    digitalWrite(frontTableMotor, HIGH);
-    delay(tableMotorLength);
-    digitalWrite(frontTableMotor, LOW);
-    if(digitalRead(resetSwitch) == LOW) reset();
-    delay(delayRate);
-    analogCurrent = analogRead(analogSensor);
-    //Serial.println("moving forward");
-  }
-  // removed since this would cause the table to end up getting closer and closer to the user
-  //analogValue = analogRead(analogSensor);
-}
-void moveBack() {
-  analogCurrent = analogRead(analogSensor);
-  digitalWrite(frontTableMotor, LOW);
-  while(analogCurrent >= analogValue) {
-    digitalWrite(backTableMotor, HIGH);
-    delay(tableMotorLength);
-    digitalWrite(backTableMotor, LOW);
-    if(digitalRead(resetSwitch) == LOW) reset();
-    delay(delayRate);
-    analogCurrent = analogRead(analogSensor);
-    //Serial.println("moving back");
-  }
-  //analogValue = analogRead(analogSensor);
-}
 
 // main()
 void loop(){

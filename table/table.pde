@@ -61,6 +61,8 @@ int rightSensorMoves = 0;        // number of times right sensor moved.
 boolean onReset = true;
 int analogOn = 0;
 int moveDone = 0;
+int analogFront = 0;
+int analogBack = 0;
 
 
 // testing ctrl-c ctrl-v's
@@ -207,14 +209,19 @@ void moveTable() {
     digitalWrite(frontTableMotor, LOW);
     
     if(analogOn) {
-      if(analogCurrent <= analogValue) {
+      if(analogCurrent <= analogValue && analogFront) {
         digitalWrite(frontTableMotor, HIGH);
         if(digitalRead(resetSwitch) == LOW) reset();
-        delay(delayRate);
-      } else if(analogCurrent >= analogValue) {
+        analogBack = 0;
+      } else if(analogCurrent >= analogValue && analogBack) {
         digitalWrite(backTableMotor, HIGH);
         if(digitalRead(resetSwitch) == LOW) reset();
-        delay(delayRate);
+        analogFront = 0;
+      }
+      else {
+        analogOn = 0;
+        analogFront = 0;
+        analogBack = 0;
       }
     }
     
@@ -224,22 +231,25 @@ void moveTable() {
       delay(tableMotorLength);
       digitalWrite(leftTableMotor, LOW);
       if(digitalRead(resetSwitch) == LOW) reset();
-      delay(delayRate);
     }
     else if(rightStatus == HIGH) {
       if(digitalRead(leftSensorPin) == HIGH) break;
       digitalWrite(rightTableMotor, HIGH);
       delay(tableMotorLength);
       digitalWrite(rightTableMotor, LOW);
-      delay(delayRate);
       if(digitalRead(resetSwitch) == LOW) reset();
     }
     else {
       delay(tableMotorLength);
     }
     
-    if(analogCurrent*1.15 < analogValue || analogCurrent*.85 > analogValue) {
+    if(analogCurrent*1.15 < analogValue) {
       analogOn = 1;
+      analogFront = 1;
+    }
+    else if(analogCurrent*.85 > analogValue) {
+      analogOn = 1;
+      analogBack = 1;
     }
     else if(leftStatus == LOW && rightStatus == LOW) {
       moveDone = 1;
@@ -270,8 +280,14 @@ void loop(){
       setupCount++;
     }
     
-    if(analogCurrent*1.15 < analogValue || analogCurrent*.85 > analogValue) {
+    if(analogCurrent*1.15 < analogValue) {
       analogOn = 1;
+      analogFront = 1;
+      moveTable();
+    }
+    else if(analogCurrent*.85 > analogValue) {
+      analogOn = 1;
+      analogBack = 1;
       moveTable();
     }
     else if(leftStatus == HIGH || rightStatus == HIGH) {

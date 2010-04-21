@@ -59,7 +59,7 @@ int analogCurrent = 0;           // current analog value. compared to analogValu
 int leftSensorMoves = 0;         // number of times the left sensors have moved. to reset to original position.
 int rightSensorMoves = 0;        // number of times right sensor moved.
 boolean onReset = true;
-
+long resetTime = 0;
 
 
 // testing ctrl-c ctrl-v's
@@ -105,7 +105,7 @@ void reset() {
     // just start moving the table at the beginnning
     // it'll automatically stop moving when it hit the limit
     digitalWrite(backTableMotor, HIGH);
-    
+    resetTime = millis();
     // move the table back to original left right position
     if(digitalRead(resetSensor) == HIGH) {
       while(digitalRead(resetSensor) == HIGH) {
@@ -141,7 +141,10 @@ void reset() {
     rightSensorMoves=0;
     
     // twenty second delay to move table all the way back
-    delay(20000); 
+    resetTime = 25000-((millis()-resetTime)*1000);
+    delay(resetTime); 
+    Serial.println(resetTime);
+    resetTime = 0;
     digitalWrite(backTableMotor, LOW);
     
     // just in case something weird happens, the table won't try to do front and back to where it was

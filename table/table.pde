@@ -241,6 +241,44 @@ void moveFront() {
   // removed since this would cause the table to end up getting closer and closer to the user
   //analogValue = analogRead(analogSensor);
 }
+void moveFrontLeft() {
+  analogCurrent = analogRead(analogSensor);
+  digitalWrite(backTableMotor, LOW);
+  while(analogCurrent <= analogValue || leftStatus == HIGH) {
+    if(analogCurrent <= analogValue) digitalWrite(frontTableMotor, HIGH);
+    if(leftStatus == HIGH) digitalWrite(leftTableMotor, HIGH);
+    delay(tableMotorLength);
+    digitalWrite(frontTableMotor, LOW);
+    digitalWrite(leftTableMotor, LOW);
+    if(digitalRead(resetSwitch) == LOW) reset();
+    delay(delayRate);
+    analogCurrent = analogRead(analogSensor);
+    leftStatus = digitalRead(leftSensorPin);
+    //Serial.println("moving forward");
+  }
+  // removed since this would cause the table to end up getting closer and closer to the user
+  //analogValue = analogRead(analogSensor);
+}
+// s/left/right might have broke something. so if left works and this doesn't, check it
+void moveFrontRight() {
+  analogCurrent = analogRead(analogSensor);
+  digitalWrite(backTableMotor, LOW);
+  while(analogCurrent <= analogValue || rightStatus == LOW) {
+    if(analogCurrent <= analogValue) digitalWrite(frontTableMotor, HIGH);
+    if(rightStatus == HIGH) digitalWrite(rightTableMotor, HIGH);
+    delay(tableMotorLength);
+    digitalWrite(frontTableMotor, LOW);
+    digitalWrite(rightTableMotor, LOW);
+    if(digitalRead(resetSwitch) == LOW) reset();
+    delay(delayRate);
+    analogCurrent = analogRead(analogSensor);
+    rightStatus = digitalRead(rightSensorPin);
+    //Serial.println("moving forward");
+  }
+  // removed since this would cause the table to end up getting closer and closer to the user
+  //analogValue = analogRead(analogSensor);
+}
+
 void moveBack() {
   analogCurrent = analogRead(analogSensor);
   digitalWrite(frontTableMotor, LOW);
@@ -256,43 +294,102 @@ void moveBack() {
   //analogValue = analogRead(analogSensor);
 }
 
+void moveBackLeft() {
+  analogCurrent = analogRead(analogSensor);
+  digitalWrite(frontTableMotor, LOW);
+  while(analogCurrent >= analogValue || leftStatus == HIGH) {
+    digitalWrite(backTableMotor, HIGH);
+    if(leftStatus == HIGH) digitalWrite(leftTableMotor, HIGH);
+    delay(tableMotorLength);
+    digitalWrite(backTableMotor, LOW);
+    digitalWrite(leftTableMotor, LOW);
+    if(digitalRead(resetSwitch) == LOW) reset();
+    delay(delayRate);
+    analogCurrent = analogRead(analogSensor);
+    leftStatus = digitalRead(leftSensorPin);
+    //Serial.println("moving back");
+  }
+  //analogValue = analogRead(analogSensor);
+}
+
+void moveBackright() {
+  analogCurrent = analogRead(analogSensor);
+  digitalWrite(frontTableMotor, LOW);
+  while(analogCurrent >= analogValue || rightStatus == HIGH) {
+    digitalWrite(backTableMotor, HIGH);
+    if(rightStatus == HIGH) digitalWrite(rightTableMotor, HIGH);
+    delay(tableMotorLength);
+    digitalWrite(backTableMotor, LOW);
+    digitalWrite(rightTableMotor, LOW);
+    if(digitalRead(resetSwitch) == LOW) reset();
+    delay(delayRate);
+    analogCurrent = analogRead(analogSensor);
+    rightStatus = digitalRead(rightSensorPin);
+    //Serial.println("moving back");
+  }
+  //analogValue = analogRead(analogSensor);
+}
+
+
+
 // main()
 void loop(){
   
   // setup the motor placement
   if(!onReset) {
-  if(!setupDone || setupCount >= 5) {
-    motorSetup();
-  }
- 
- 
- 
- 
- 
+    if(!setupDone || setupCount >= 5) {
+      motorSetup();
+    }
+    
+    // move table if sensors detect object
+    leftStatus = digitalRead(leftSensorPin);
+    rightStatus = digitalRead(rightSensorPin);
+    analogCurrent = analogRead(analogSensor);
+    
+    // if both sensors are activated, something is wrong.
+    // it might be fixed with time. if not resetup the sensors
+    
+    if(analogCurrent*1.15 < analogValue) {
+      
+      if(leftStatus == HIGH && rightStatus == HIGH) {
+        setupCount++;
+      }
+      else if(leftStatus == HIGH) {
+        moveFrontLeft();
+      }
+      else if(rightStatus == HIGH) {
+        moveFrontRight();
+      }
+      else {
+        moveFront();
+      }
+    }
+    else if(analogCurrent*.85 > analogValue) {
+      if(leftStatus == HIGH && rightStatus == HIGH) {
+        setupCount++;
+      }
+      else if(leftStatus == HIGH) {
+        moveBackLeft();
+      }
+      else if(rightStatus == HIGH) {
+        moveBackRight();
+      }
+      else {
+        moveBack();
+      }
+    }
+    else {
+      if(leftStatus == HIGH && rightStatus == HIGH) {
+        setupCount++;
+      }
+      else if(leftStatus == HIGH) {
+        moveLeft();
+      }
+      else if(rightStatus == HIGH) {
+        moveRight();
+      }
+    }
   
-  // move table if sensors detect object
-  leftStatus = digitalRead(leftSensorPin);
-  rightStatus = digitalRead(rightSensorPin);
-  analogCurrent = analogRead(analogSensor);
-  
-  // if both sensors are activated, something is wrong.
-  // it might be fixed with time. if not resetup the sensors
-  if(leftStatus == HIGH && rightStatus == HIGH) {
-    setupCount++;
-  }
-  else if(leftStatus == HIGH) {
-    moveLeft();
-  }
-  else if(rightStatus == HIGH) {
-    moveRight();
-  }
-  
-  if(analogCurrent*1.15 < analogValue) {
-    moveFront();
-  }
-  else if(analogCurrent*.85 > analogValue) {
-    moveBack();
-  }
   }
   //Serial.println(analogCurrent);
   if(digitalRead(resetSwitch) == LOW) reset();

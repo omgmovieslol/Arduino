@@ -59,7 +59,8 @@ int analogCurrent = 0;           // current analog value. compared to analogValu
 int leftSensorMoves = 0;         // number of times the left sensors have moved. to reset to original position.
 int rightSensorMoves = 0;        // number of times right sensor moved.
 boolean onReset = true;
-
+int analogOn = 0;
+int moveDone = 0;
 
 
 // testing ctrl-c ctrl-v's
@@ -197,6 +198,58 @@ void motorSetup() {
   // sensors are in correct positions
 }
 
+void moveTable() {
+  while(!moveDone) {
+    leftStatus = digitalRead(leftSensorPin);
+    rightStatus = digitalRead(rightSensorPin);
+    analogCurrent = analogRead(analogSensor);
+    digitalWrite(backTableMotor, LOW);
+    digitalWrite(frontTableMotor, LOW);
+    
+    if(analogOn) {
+      if(analogCurrent <= analogValue) {
+        digitalWrite(frontTableMotor, HIGH);
+        if(digitalRead(resetSwitch) == LOW) reset();
+        delay(delayRate);
+      } else if(analogCurrent >= analogValue) {
+        digitalWrite(backTableMotor, HIGH);
+        if(digitalRead(resetSwitch) == LOW) reset();
+        delay(delayRate);
+      }
+    }
+    
+    if(leftStatus == HIGH) {
+      if(digitalRead(rightSensorPin) == HIGH) break;
+      digitalWrite(leftTableMotor, HIGH);
+      delay(tableMotorLength);
+      digitalWrite(leftTableMotor, LOW);
+      if(digitalRead(resetSwitch) == LOW) reset();
+      delay(delayRate);
+    }
+    else if(rightStatus == HIGH) {
+      if(digitalRead(leftSensorPin) == HIGH) break;
+      digitalWrite(rightTableMotor, HIGH);
+      delay(tableMotorLength);
+      digitalWrite(rightTableMotor, LOW);
+      delay(delayRate);
+      if(digitalRead(resetSwitch) == LOW) reset();
+    }
+    else {
+      delay(tableMotorLength);
+    }
+    
+    if(analogCurrent*1.15 < analogValue || analogCurrent*.85 > analogValue) {
+      analogOn = 1;
+    }
+    else if(leftStatus == LOW || rightStatus == LOW) {
+      moveDone = 1;
+    }
+    
+    digitalWrite(frontTableMotor, LOW);
+    digitalWrite(backTableMotor, LOW);
+  }
+}  
+
 // table movement functions
 // probably should use PWM
 void moveLeft() {
@@ -261,38 +314,28 @@ void loop(){
   
   // setup the motor placement
   if(!onReset) {
-  if(!setupDone || setupCount >= 5) {
-    motorSetup();
-  }
- 
- 
- 
- 
- 
-  
-  // move table if sensors detect object
-  leftStatus = digitalRead(leftSensorPin);
-  rightStatus = digitalRead(rightSensorPin);
-  analogCurrent = analogRead(analogSensor);
-  
-  // if both sensors are activated, something is wrong.
-  // it might be fixed with time. if not resetup the sensors
-  if(leftStatus == HIGH && rightStatus == HIGH) {
-    setupCount++;
-  }
-  else if(leftStatus == HIGH) {
-    moveLeft();
-  }
-  else if(rightStatus == HIGH) {
-    moveRight();
-  }
-  
-  if(analogCurrent*1.15 < analogValue) {
-    moveFront();
-  }
-  else if(analogCurrent*.85 > analogValue) {
-    moveBack();
-  }
+    if(!setupDone || setupCount >= 5) {
+      motorSetup();
+    }
+    // move table if sensors detect object
+    leftStatus = digitalRead(leftSensorPin);
+    rightStatus = digitalRead(rightSensorPin);
+    analogCurrent = analogRead(analogSensor);
+    
+    // if both sensors are activated, something is wrong.
+    // it might be fixed with time. if not resetup the sensors
+    if(leftStatus == HIGH && rightStatus == HIGH) {
+      setupCount++;
+    }
+    
+    if(analogCurrent*1.15 < analogValue || analogCurrent*.85 > analogValue) {
+      analogOn = 1;
+      moveTable();
+    }
+    else if(leftStatus == HIGH || rightStatus == HIGH) {
+      analogOn = 0;
+      moveTable();
+    }
   }
   //Serial.println(analogCurrent);
   if(digitalRead(resetSwitch) == LOW) reset();

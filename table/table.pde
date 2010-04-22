@@ -147,7 +147,7 @@ void reset() {
     rightSensorMoves=0;
     
     // twenty second delay to move table all the way back
-    resetTime = 25000-((millis()-resetTime)*1000);
+    resetTime = 20000-((millis()-resetTime)*1000);
     delay(resetTime); 
     Serial.println(resetTime);
     resetTime = 0;

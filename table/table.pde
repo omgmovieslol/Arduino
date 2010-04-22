@@ -215,7 +215,9 @@ void moveTable() {
     digitalWrite(frontTableMotor, LOW);
     
     if(analogOn) {
-      if(analogCurrent <= analogValue && analogFront) {
+      if(analogCurrent < awayReset) {
+        reset();
+      } else if(analogCurrent <= analogValue && analogFront) {
         digitalWrite(frontTableMotor, HIGH);
         if(digitalRead(resetSwitch) == LOW) reset();
         analogBack = 0;
@@ -287,6 +289,10 @@ void loop(){
     }
     
     moveDone = 0;
+    
+    if(analogCurrent < awayReset) {
+      reset();
+    }
     
     if(analogCurrent*1.15 < analogValue) {
       analogOn = 1;

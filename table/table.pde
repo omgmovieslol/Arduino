@@ -286,6 +286,8 @@ void loop(){
       setupCount++;
     }
     
+    moveDone = 0;
+    
     if(analogCurrent*1.15 < analogValue) {
       analogOn = 1;
       analogFront = 1;

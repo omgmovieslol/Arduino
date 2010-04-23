@@ -111,7 +111,7 @@ void reset() {
     // just start moving the table at the beginnning
     // it'll automatically stop moving when it hit the limit
     digitalWrite(backTableMotor, HIGH);
-    resetTime = millis();
+    resetTime = millis()/1000;
     // move the table back to original left right position
     if(digitalRead(resetSensor) == HIGH) {
       while(digitalRead(resetSensor) == HIGH) {
@@ -147,9 +147,9 @@ void reset() {
     rightSensorMoves=0;
     
     // twenty second delay to move table all the way back
-    resetTime = 20000-((millis()-resetTime)*1000);
-    delay(resetTime); 
+    resetTime = 30000-(((millis()/1000)-resetTime)*1000);
     Serial.println(resetTime);
+    delay(resetTime); 
     resetTime = 0;
     digitalWrite(backTableMotor, LOW);
     
@@ -162,6 +162,7 @@ void reset() {
     // start the automation again
     onReset = false;
     motorSetup();
+    analogValue = analogRead(analogSensor);
   }
   
   
@@ -198,7 +199,7 @@ void motorSetup() {
     delay(delayRate);
   }
   
-  analogValue = analogRead(analogSensor);
+  //analogValue = analogRead(analogSensor);
   
   setupDone = 1;
   setupCount = 0;

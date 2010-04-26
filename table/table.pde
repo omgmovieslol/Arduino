@@ -16,23 +16,23 @@ If analog too far, don't move
 // CONSTANTS
 
 // inputs
-const int leftSensorPin = 12;     // left sensor input
+const int leftSensorPin = 11;     // left sensor input
 const int rightSensorPin = 5;    // right sensor input
 
-const int resetSensor = 11;      // table left/right reset sensor
+const int resetSensor = 10;      // table left/right reset sensor
 
 const int analogSensor = 0;      // front/back sensor. Uses analog measurement
 
 // output to motors
 const int leftSensorMotor = 3;   // left sensor motor
 const int leftSensorReset = 4;   // left sensor motor reverse direction
-const int rightSensorMotor = 6;  // right sensor motor
-const int rightSensorReset = 7;  // right sensor motor reverse direction
+const int rightSensorMotor = 7;  // right sensor motor
+const int rightSensorReset = 6;  // right sensor motor reverse direction
 
-const int leftTableMotor = 8;    // move table to the left
-const int rightTableMotor = 9;   // move table to the right
+const int leftTableMotor = 9;    // move table to the left
+const int rightTableMotor = 8;   // move table to the right
 
-const int frontTableMotor = 10;  // move table to the front
+const int frontTableMotor = 12;  // move table to the front
 const int backTableMotor = 13;   // move table to the back
 
 const int resetSwitch = 2;       // reset switch

@@ -107,67 +107,72 @@ void setup() {
 
 void reset() {
   
-  if(!onReset) {
-    Serial.println("on reset");
-    onReset = true;
-    
-    // move table all the way back
-    // just start moving the table at the beginnning
-    // it'll automatically stop moving when it hit the limit
-    digitalWrite(backTableMotor, HIGH);
-    resetTime = millis()/1000;
-    // move the table back to original left right position
-    if(digitalRead(resetSensor) == HIGH) {
-      while(digitalRead(resetSensor) == HIGH) {
-        digitalWrite(rightTableMotor, HIGH);
-        delay(tableMotorLength);
-        digitalWrite(rightTableMotor, LOW);
+  delay(450);
+  if(digitalRead(resetSwitch) == HIGH) {
+  
+    if(!onReset) {
+      Serial.println("on reset");
+      onReset = true;
+      
+      // move table all the way back
+      // just start moving the table at the beginnning
+      // it'll automatically stop moving when it hit the limit
+      digitalWrite(frontTableMotor, LOW);
+      digitalWrite(backTableMotor, HIGH);
+      resetTime = millis()/1000;
+      // move the table back to original left right position
+      if(digitalRead(resetSensor) == HIGH) {
+        while(digitalRead(resetSensor) == HIGH) {
+          digitalWrite(rightTableMotor, HIGH);
+          delay(tableMotorLength);
+          digitalWrite(rightTableMotor, LOW);
+          delay(delayRate);
+        }
+      }
+      else {
+        while(digitalRead(resetSensor) == LOW) {
+          digitalWrite(leftTableMotor, HIGH);
+          delay(tableMotorLength);
+          digitalWrite(leftTableMotor, LOW);
+          delay(delayRate);
+        }
+      }
+      
+      // reset sensors back to original position
+      for(int i=0; i<leftSensorMoves; i++) {
+        digitalWrite(leftSensorReset, HIGH);
+        delay(sensorMotorLength);
+        digitalWrite(leftSensorReset, LOW);
         delay(delayRate);
       }
-    }
-    else {
-      while(digitalRead(resetSensor) == LOW) {
-        digitalWrite(leftTableMotor, HIGH);
-        delay(tableMotorLength);
-        digitalWrite(leftTableMotor, LOW);
+      leftSensorMoves=0;
+      for(int i=0; i<rightSensorMoves; i++) {
+        digitalWrite(rightSensorReset, HIGH);
+        delay(sensorMotorLength);
+        digitalWrite(rightSensorReset, LOW);
         delay(delayRate);
       }
+      rightSensorMoves=0;
+      
+      // twenty second delay to move table all the way back
+      resetTime = 25000-(((millis()/1000)-resetTime)*1000);
+      //Serial.println(resetTime);
+      delay(resetTime); 
+      resetTime = 0;
+      digitalWrite(backTableMotor, LOW);
+      
+      // just in case something weird happens, the table won't try to do front and back to where it was
+      analogValue = analogRead(analogSensor);
+      
+      
+    } else {
+      // second reset press
+      // start the automation again
+      Serial.println("automation begin");
+      onReset = false;
+      motorSetup();
+      analogValue = analogRead(analogSensor);
     }
-    
-    // reset sensors back to original position
-    for(int i=0; i<leftSensorMoves; i++) {
-      digitalWrite(leftSensorReset, HIGH);
-      delay(sensorMotorLength);
-      digitalWrite(leftSensorReset, LOW);
-      delay(delayRate);
-    }
-    leftSensorMoves=0;
-    for(int i=0; i<rightSensorMoves; i++) {
-      digitalWrite(rightSensorReset, HIGH);
-      delay(sensorMotorLength);
-      digitalWrite(rightSensorReset, LOW);
-      delay(delayRate);
-    }
-    rightSensorMoves=0;
-    
-    // twenty second delay to move table all the way back
-    resetTime = 25000-(((millis()/1000)-resetTime)*1000);
-    //Serial.println(resetTime);
-    delay(resetTime); 
-    resetTime = 0;
-    digitalWrite(backTableMotor, LOW);
-    
-    // just in case something weird happens, the table won't try to do front and back to where it was
-    analogValue = analogRead(analogSensor);
-    
-    
-  } else {
-    // second reset press
-    // start the automation again
-    Serial.println("automation begin");
-    onReset = false;
-    motorSetup();
-    analogValue = analogRead(analogSensor);
   }
   
   

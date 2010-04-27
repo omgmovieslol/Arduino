@@ -8,14 +8,14 @@ const int resetSwitch = 2;       // reset switch
 
 const int leftSensorMotor = 4;   // left sensor motor
 const int leftSensorReset = 3;   // left sensor motor reverse direction
-const int rightSensorMotor = 10;  // right sensor motor
-const int rightSensorReset = 6;  // right sensor motor reverse direction
+const int rightSensorMotor = 6 ;  // right sensor motor
+const int rightSensorReset = 10;  // right sensor motor reverse direction
 
 const int leftTableMotor = 9;    // move table to the left
 const int rightTableMotor = 8;   // move table to the right
 
-const int frontTableMotor = 5;  // move table to the front
-const int backTableMotor = 7;   // move table to the back
+const int frontTableMotor = 7;  // move table to the front
+const int backTableMotor = 5;   // move table to the back
 
 //const int ledPin = 13;
 
